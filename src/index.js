@@ -28,32 +28,33 @@ function cosineDistance(vectorA, vectorB) {
 
 const chars = ` abcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()-_{}:;"'<,>.?/`;
 
-const isExactMatch = ([, v]) => v === 1;
+const isExactMatch = v => v === 1;
+const descendingOrder = ([, a], [, b]) => a > b;
 
-function createNGramVectors(word, shingleSize = 2) {
-    const arrLength = Math.max(0, word.length - shingleSize) + 1;
+function createNGramVectors(word, dimensionality = 2) {
+    const arrLength = Math.max(0, word.length - dimensionality) + 1;
     return [...new Array(arrLength)]
         .map((_, i) => word
-            .substr(i, shingleSize)
+            .substr(i, dimensionality)
             .split('')
             .map(v => chars.indexOf(v) + 1));
 }
 
-module.exports = function createNGramSearch(list, shingleSize = 2) {
+module.exports = function createNGramSearch(list, dimensionality = 2, thresholdFn = isExactMatch) {
     const vectorDictionary = list.reduce((acc, v) => ({
         ...acc,
-        [v]: createNGramVectors(v.toLowerCase(), shingleSize)
+        [v]: createNGramVectors(v.toLowerCase(), dimensionality)
     }), {});
 
     return function matchEntities(testString) {
-        const testVector = createNGramVectors(testString.toLowerCase(), shingleSize);
+        const testVector = createNGramVectors(testString.toLowerCase(), dimensionality);
 
         return Object.entries(vectorDictionary)
             .map(([key, vectors]) => [key, Math.max(
                 ...vectors.map(v => Math.max(
                     ...testVector.map(tv => 1 - cosineDistance(v, tv))))
             )])
-            .filter(isExactMatch)
-            .sort(([, a], [, b]) => a > b);
+            .filter(([, v]) => thresholdFn(v))
+            .sort(descendingOrder);
     }
 }
