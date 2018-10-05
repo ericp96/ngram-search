@@ -1,0 +1,19 @@
+{
+  "name": "ngram-search",
+  "version": "0.0.1",
+  "description": "NGram Search Algorithm",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericp96/ngram-search.git"
+  },
+  "author": "Eric Pastuer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ericp96/ngram-search/issues"
+  },
+  "homepage": "https://github.com/ericp96/ngram-search#readme"
+}
